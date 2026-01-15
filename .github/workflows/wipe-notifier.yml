@@ -1,0 +1,29 @@
+name: 🗑️ RAST Wipe Notifier
+on:
+  schedule:
+    - cron: '0 12 * * 1'    # Понедельник 15:00 МСК
+    - cron: '0 12 * * 5'    # Пятница 15:00 МСК  
+  workflow_dispatch:         # Ручной тест
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: 📦 Install Python packages
+      run: pip install requests vk_api
+    
+    - name: 🚀 Send notifications
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        VK_TOKEN: ${{ secrets.VK_TOKEN }}
+        VK_GROUP_ID: ${{ secrets.VK_GROUP_ID }}
+      run: python notifier.py
